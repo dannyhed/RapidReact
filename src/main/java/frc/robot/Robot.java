@@ -41,6 +41,9 @@ public class Robot extends TimedRobot {
   private final Compressor comp = new Compressor(RobotMap.compressor, PneumaticsModuleType.CTREPCM);
   private final DoubleSolenoid paddle = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RobotMap.shootup, RobotMap.shootdown);
 
+  private final DoubleSolenoid intakeL = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RobotMap.intakeLup, RobotMap.intakeLdown);
+  private final DoubleSolenoid intakeR = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RobotMap.intakeRup, RobotMap.intakeRdown);
+
   private final float SPD = 1f;
   private final float sideSPD = 0.5f;
   private final float shootSPD = 0.5f;
