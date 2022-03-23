@@ -28,8 +28,7 @@ public class CM {
     int DriveMode = Tank;
 
     public static int forwardR, forwardL, sidewaysR, sidewaysL,
-        shootSpin, intakeSpin, intakePos,
-        shootPaddle;
+        shootSpin, intakeSpin, intakePos, shootPaddle;
 
     //Assignments
     public CM() {
