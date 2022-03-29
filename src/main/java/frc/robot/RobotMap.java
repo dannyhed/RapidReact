@@ -13,6 +13,10 @@ public class RobotMap {
     public static final int shooter = 6;
 
     //Pneumatics
+    public static final int intakeupR = 3;
+    public static final int intakedownR = 4;
+    public static final int intakeupL = 5;
+    public static final int intakedownL = 6;
     public static final int shootup = 7;
     public static final int shootdown = 8;
     public static final int compressor = 9;

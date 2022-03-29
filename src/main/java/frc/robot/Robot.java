@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
 
   private final float SPD = 1f;
   private final float sideSPD = 0.5f;
-  private final float shootSPD = 0.5f;
+  private final float shootSPD = 0.6f;
   private final float intakeSPD = 0.6f;
 
   //private final Timer m_timer = new Timer();
