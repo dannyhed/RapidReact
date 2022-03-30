@@ -21,6 +21,9 @@ import java.util.ResourceBundle.Control;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -29,8 +32,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
  * directory.
  */
 public class Robot extends TimedRobot {
-  Spark shooter = new Spark(RM.shooterMap);
-  Spark intake = new Spark(RM.intake);
+  private CANSparkMax shooter = new CANSparkMax(RM.shooterMap, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private CANSparkMax intake = new CANSparkMax(RM.intake, CANSparkMaxLowLevel.MotorType.kBrushless);
   
   private final TalonSRX fl = new TalonSRX(RM.frontLeft);
   private final TalonSRX fr = new TalonSRX(RM.frontRight);
@@ -118,7 +121,6 @@ public class Robot extends TimedRobot {
       intakeUp = false;
       intakeButton = false;
     }*/
-
     if (joy.getRawButton(CM.shootPaddle))
       paddle.set(Value.kForward);
     else

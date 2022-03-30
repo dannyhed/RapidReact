@@ -10,7 +10,7 @@ public class RM {
 
     //Spark
     public static final int intake = 2;
-    public static final int shooterMap = 0;
+    public static final int shooterMap = 1;
 
     //Pneumatics
     /*public static final int intakeRup = 1;
