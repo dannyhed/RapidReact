@@ -17,7 +17,7 @@ public class RM {
     public static final int intakeRdown = 2;
     public static final int intakeLup = 3;
     public static final int intakeLdown = 4;*/
-    public static final int shootup = 1;
-    public static final int shootdown = 2;
+    public static final int shootup = 0;
+    public static final int shootdown = 1;
     public static final int compressor = 0;
 }

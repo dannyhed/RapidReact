@@ -42,16 +42,16 @@ public class Robot extends TimedRobot {
 
   private final Joystick joy = new Joystick(0);
 
-  private final Compressor comp = new Compressor(RM.compressor, PneumaticsModuleType.CTREPCM);
-  private final DoubleSolenoid paddle = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.shootup, RM.shootdown);
+  Compressor comp = new Compressor(RM.compressor, PneumaticsModuleType.CTREPCM);
+  DoubleSolenoid paddle = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.shootup, RM.shootdown);
 
   //private final DoubleSolenoid intakeL = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeLup, RM.intakeLdown);
   //private final DoubleSolenoid intakeR = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeRup, RM.intakeRdown);
 
   private final float SPD = 1f;
   private final float sideSPD = 0.5f;
-  private final float shootSPD = 1f;
-  private final float intakeSPD = 0.6f;
+  private final float shootSPD = 0.5f;
+  private final float intakeSPD = 0.25f;
 
   private boolean intakeUp = true;
   private boolean intakeButton = false;
@@ -121,10 +121,10 @@ public class Robot extends TimedRobot {
       intakeUp = false;
       intakeButton = false;
     }*/
-    if (joy.getRawButton(CM.shootPaddle))
-      paddle.set(Value.kForward);
-    else
+    if (joy.getRawButton(6))
       paddle.set(Value.kReverse);
+    else
+      paddle.set(Value.kForward);
     
   }
 
