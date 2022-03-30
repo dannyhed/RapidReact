@@ -9,15 +9,15 @@ public class RM {
     public static final int backRight = 14;
 
     //Spark
-    public static final int intake = 5;
-    public static final int shooter = 6;
+    public static final int intake = 2;
+    public static final int shooterMap = 0;
 
     //Pneumatics
-    public static final int intakeRup = 1;
+    /*public static final int intakeRup = 1;
     public static final int intakeRdown = 2;
     public static final int intakeLup = 3;
-    public static final int intakeLdown = 4;
-    public static final int shootup = 5;
-    public static final int shootdown = 6;
-    public static final int compressor = 7;
+    public static final int intakeLdown = 4;*/
+    public static final int shootup = 1;
+    public static final int shootdown = 2;
+    public static final int compressor = 0;
 }

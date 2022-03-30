@@ -29,8 +29,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
  * directory.
  */
 public class Robot extends TimedRobot {
-  private final Spark shooter = new Spark(RM.shooter);
-  private final Spark intake = new Spark(RM.intake);
+  Spark shooter = new Spark(RM.shooterMap);
+  Spark intake = new Spark(RM.intake);
   
   private final TalonSRX fl = new TalonSRX(RM.frontLeft);
   private final TalonSRX fr = new TalonSRX(RM.frontRight);
@@ -42,12 +42,12 @@ public class Robot extends TimedRobot {
   private final Compressor comp = new Compressor(RM.compressor, PneumaticsModuleType.CTREPCM);
   private final DoubleSolenoid paddle = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.shootup, RM.shootdown);
 
-  private final DoubleSolenoid intakeL = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeLup, RM.intakeLdown);
-  private final DoubleSolenoid intakeR = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeRup, RM.intakeRdown);
+  //private final DoubleSolenoid intakeL = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeLup, RM.intakeLdown);
+  //private final DoubleSolenoid intakeR = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeRup, RM.intakeRdown);
 
   private final float SPD = 1f;
   private final float sideSPD = 0.5f;
-  private final float shootSPD = 0.5f;
+  private final float shootSPD = 1f;
   private final float intakeSPD = 0.6f;
 
   private boolean intakeUp = true;
@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
     
     intake.set(intakeSPD * joy.getRawAxis(CM.intakeSpin));
 
-    if (joy.getRawButton(CM.intakePos) && intakeUp) {
+    /*if (joy.getRawButton(CM.intakePos) && intakeUp) {
       intakeL.set(Value.kForward);
       intakeR.set(Value.kForward);
       intakeButton = true;
@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
     if (intakeButton && !joy.getRawButton(CM.intakePos)) {
       intakeUp = false;
       intakeButton = false;
-    }
+    }*/
 
     if (joy.getRawButton(CM.shootPaddle))
       paddle.set(Value.kForward);
