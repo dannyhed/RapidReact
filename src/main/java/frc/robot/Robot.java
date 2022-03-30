@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
 
   private final float SPD = 1f;
   private final float sideSPD = 0.5f;
-  private final float shootSPD = 0.5f;
+  private final float shootSPD = 0.4f;
   private final float intakeSPD = 0.25f;
 
   private boolean intakeUp = true;
