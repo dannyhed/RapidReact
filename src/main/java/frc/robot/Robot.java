@@ -16,10 +16,14 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 import java.beans.IntrospectionException;
+import java.util.ResourceBundle.Control;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -28,23 +32,34 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
  * directory.
  */
 public class Robot extends TimedRobot {
-  private final Spark shooter = new Spark(RobotMap.shooter);
-  private final Spark intake = new Spark(RobotMap.intake);
+  private CANSparkMax shooter = new CANSparkMax(RM.shooterMap, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private CANSparkMax intake = new CANSparkMax(RM.intake, CANSparkMaxLowLevel.MotorType.kBrushless);
   
-  private final TalonSRX fl = new TalonSRX(RobotMap.frontLeft);
-  private final TalonSRX fr = new TalonSRX(RobotMap.frontRight);
-  private final TalonSRX bl = new TalonSRX(RobotMap.backLeft);
-  private final TalonSRX br = new TalonSRX(RobotMap.backRight);
+  private final TalonSRX fl = new TalonSRX(RM.frontLeft);
+  private final TalonSRX fr = new TalonSRX(RM.frontRight);
+  private final TalonSRX bl = new TalonSRX(RM.backLeft);
+  private final TalonSRX br = new TalonSRX(RM.backRight);
 
   private final Joystick joy = new Joystick(0);
 
-  private final Compressor comp = new Compressor(RobotMap.compressor, PneumaticsModuleType.CTREPCM);
-  private final DoubleSolenoid paddle = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RobotMap.shootup, RobotMap.shootdown);
+  Compressor comp = new Compressor(RM.compressor, PneumaticsModuleType.CTREPCM);
+  DoubleSolenoid paddle = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.shootup, RM.shootdown);
+
+  //private final DoubleSolenoid intakeL = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeLup, RM.intakeLdown);
+  //private final DoubleSolenoid intakeR = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeRup, RM.intakeRdown);
 
   private final float SPD = 1f;
   private final float sideSPD = 0.5f;
+<<<<<<< HEAD
   private final float shootSPD = 0.6f;
   private final float intakeSPD = 0.6f;
+=======
+  private final float shootSPD = 0.4f;
+  private final float intakeSPD = 0.25f;
+
+  private boolean intakeUp = true;
+  private boolean intakeButton = false;
+>>>>>>> 1de5afec4264145f3a5ebc9581567a7a32203e8f
 
   //private final Timer m_timer = new Timer();
 
@@ -88,19 +103,33 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
-    fr.set(ControlMode.PercentOutput, SPD * (joy.getRawAxis(5) + sideSPD * joy.getRawAxis(4)));
-    br.set(ControlMode.PercentOutput, SPD * (joy.getRawAxis(5) - sideSPD * joy.getRawAxis(4)));
-    fl.set(ControlMode.PercentOutput, SPD * (-joy.getRawAxis(1) + sideSPD * joy.getRawAxis(0)));
-    bl.set(ControlMode.PercentOutput, SPD * (-joy.getRawAxis(1) - sideSPD * joy.getRawAxis(0)));
+    fr.set(ControlMode.PercentOutput, SPD * (joy.getRawAxis(CM.forwardR) + sideSPD * joy.getRawAxis(CM.sidewaysR)));
+    br.set(ControlMode.PercentOutput, SPD * (joy.getRawAxis(CM.forwardR) - sideSPD * joy.getRawAxis(CM.sidewaysR)));
+    fl.set(ControlMode.PercentOutput, SPD * (-joy.getRawAxis(CM.forwardL) + sideSPD * joy.getRawAxis(CM.sidewaysL)));
+    bl.set(ControlMode.PercentOutput, SPD * (-joy.getRawAxis(CM.forwardL) - sideSPD * joy.getRawAxis(CM.sidewaysL)));
 
-    shooter.set(shootSPD * joy.getRawAxis(3));
+    shooter.set(shootSPD * joy.getRawAxis(CM.shootSpin));
     
-    intake.set(intakeSPD * joy.getRawAxis(2));
+    intake.set(intakeSPD * joy.getRawAxis(CM.intakeSpin));
 
+    /*if (joy.getRawButton(CM.intakePos) && intakeUp) {
+      intakeL.set(Value.kForward);
+      intakeR.set(Value.kForward);
+      intakeButton = true;
+    }
+    if (joy.getRawButton(CM.intakePos) && !intakeUp){
+      intakeL.set(Value.kReverse);
+      intakeR.set(Value.kReverse);
+      intakeButton = true;
+    }
+    if (intakeButton && !joy.getRawButton(CM.intakePos)) {
+      intakeUp = false;
+      intakeButton = false;
+    }*/
     if (joy.getRawButton(6))
-      paddle.set(Value.kForward);
-    else
       paddle.set(Value.kReverse);
+    else
+      paddle.set(Value.kForward);
     
   }
 
