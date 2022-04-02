@@ -23,9 +23,9 @@ public class CM {
     static int R_Joy_Down = 10;
 
     //Drive Modes
-    int Tank = 1;
+    //int Tank = 1;
     
-    int DriveMode = Tank;
+    //int DriveMode = Tank;
 
     public static int 
         forwardR = R_Y_Axis, 
