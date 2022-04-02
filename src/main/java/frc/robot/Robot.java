@@ -25,6 +25,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import org.ejml.simple.AutomaticSimpleMatrixConvert;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -52,11 +54,20 @@ public class Robot extends TimedRobot {
   private final float sideSPD = 0.5f;
   private final float shootSPD = 0.6f;
   private final float intakeSPD = 0.25f;
+  private final float revSpeed = 0.6f;
+
+  //Autonomous timing
+  private final float autoBack = 2.0f;
+  private final float autoFwd = 2.0f;
+  private final float autoRest = 0.25f;
+  private final float autoRev = 2.0f;
+  private final float autoPaddle = 1.0f;
+  private final float autoSPD = 0.5f;
 
   private boolean intakeUp = true;
   private boolean intakeButton = false;
 
-  //private final Timer m_timer = new Timer();
+  private final Timer timer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -72,23 +83,41 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
-    /*
-    m_timer.reset();
-    m_timer.start();
-    */
+    timer.reset();
+    timer.start();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    // Drive for 2 seconds
-    /*
-    if (m_timer.get() < 2.0) {
-      m_robotDrive.arcadeDrive(0.5, 0.0); // drive forwards half speed
-    } else {
-      m_robotDrive.stopMotor(); // stop robot
+    if (timer.get() < autoBack) {
+      fr.set(ControlMode.PercentOutput, -autoSPD);
+      br.set(ControlMode.PercentOutput, -autoSPD);
+      fl.set(ControlMode.PercentOutput, autoSPD);
+      bl.set(ControlMode.PercentOutput, autoSPD);
+    } 
+    else if (timer.get() < (autoBack + autoRest)){
+      fr.set(ControlMode.PercentOutput, 0);
+      br.set(ControlMode.PercentOutput, 0);
+      fl.set(ControlMode.PercentOutput, 0);
+      bl.set(ControlMode.PercentOutput, 0);
     }
-    */
+    else if (timer.get() < (autoBack + autoRest + autoFwd)){
+      fr.set(ControlMode.PercentOutput, autoSPD);
+      br.set(ControlMode.PercentOutput, autoSPD);
+      fl.set(ControlMode.PercentOutput, -autoSPD);
+      bl.set(ControlMode.PercentOutput, -autoSPD);
+    }
+    else if (timer.get() < (autoBack + autoRest + autoFwd + autoRev)) {
+      shooter.set(revSpeed);
+    }
+    else if (timer.get() < (autoBack + autoRest + autoFwd + autoRev + autoPaddle)){
+      paddle.set(Value.kForward);
+    }
+    else {
+      shooter.set(0);
+      paddle.set(Value.kReverse);
+    }
   }
 
   /** This function is called once each time the robot enters teleoperated mode. */
