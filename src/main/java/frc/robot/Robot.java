@@ -50,19 +50,19 @@ public class Robot extends TimedRobot {
   //private final DoubleSolenoid intakeL = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeLup, RM.intakeLdown);
   //private final DoubleSolenoid intakeR = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeRup, RM.intakeRdown);
 
-  private final float SPD = 1f;
-  private final float sideSPD = 0.5f;
-  private final float shootSPD = 0.6f;
-  private final float intakeSPD = 0.25f;
+  private final float SPD = 0.6f;
+  private final float sideSPD = 1.2f;
+  private final float shootSPD = 0.45f;
+  private final float intakeSPD = 0.15f;
   private final float revSpeed = 0.6f;
 
   //Autonomous timing
-  private final float autoBack = 2.0f;
-  private final float autoFwd = 2.0f;
+  private final float autoBack = 1.0f;
+  private final float autoFwd = 1.0f;
   private final float autoRest = 0.25f;
-  private final float autoRev = 2.0f;
+  private final float autoRev = 1.0f;
   private final float autoPaddle = 1.0f;
-  private final float autoSPD = 0.5f;
+  private final float autoSPD = 0.25f;
 
   private boolean intakeUp = true;
   private boolean intakeButton = false;
@@ -91,10 +91,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     if (timer.get() < autoBack) {
-      fr.set(ControlMode.PercentOutput, -autoSPD);
-      br.set(ControlMode.PercentOutput, -autoSPD);
-      fl.set(ControlMode.PercentOutput, autoSPD);
-      bl.set(ControlMode.PercentOutput, autoSPD);
+      fr.set(ControlMode.PercentOutput, autoSPD);
+      br.set(ControlMode.PercentOutput, autoSPD);
+      fl.set(ControlMode.PercentOutput, -autoSPD);
+      bl.set(ControlMode.PercentOutput, -autoSPD);
     } 
     else if (timer.get() < (autoBack + autoRest)){
       fr.set(ControlMode.PercentOutput, 0);
@@ -103,20 +103,24 @@ public class Robot extends TimedRobot {
       bl.set(ControlMode.PercentOutput, 0);
     }
     else if (timer.get() < (autoBack + autoRest + autoFwd)){
-      fr.set(ControlMode.PercentOutput, autoSPD);
-      br.set(ControlMode.PercentOutput, autoSPD);
-      fl.set(ControlMode.PercentOutput, -autoSPD);
-      bl.set(ControlMode.PercentOutput, -autoSPD);
+      fr.set(ControlMode.PercentOutput, -autoSPD);
+      br.set(ControlMode.PercentOutput, -autoSPD);
+      fl.set(ControlMode.PercentOutput, autoSPD);
+      bl.set(ControlMode.PercentOutput, autoSPD);
     }
     else if (timer.get() < (autoBack + autoRest + autoFwd + autoRev)) {
+      fr.set(ControlMode.PercentOutput, 0);
+      br.set(ControlMode.PercentOutput, 0);
+      fl.set(ControlMode.PercentOutput, 0);
+      bl.set(ControlMode.PercentOutput, 0);
       shooter.set(revSpeed);
     }
     else if (timer.get() < (autoBack + autoRest + autoFwd + autoRev + autoPaddle)){
-      paddle.set(Value.kForward);
+      paddle.set(Value.kReverse);
     }
     else {
       shooter.set(0);
-      paddle.set(Value.kReverse);
+      paddle.set(Value.kForward);
     }
   }
 
@@ -134,22 +138,28 @@ public class Robot extends TimedRobot {
 
     shooter.set(shootSPD * joy.getRawAxis(CM.shootSpin));
     
-    intake.set(intakeSPD * joy.getRawAxis(CM.intakeSpin));
+    //intake.set(intakeSPD * joy.getRawAxis(CM.intakeSpin));
 
-    /*if (joy.getRawButton(CM.intakePos) && intakeUp) {
-      intakeL.set(Value.kForward);
-      intakeR.set(Value.kForward);
+    //////////////// TOGGLE INTAKE /////////////////
+    if (joy.getRawButton(CM.intakePos) && intakeUp && !intakeButton) {
+      intake.set(intakeSPD);
       intakeButton = true;
+      intakeUp = false;
     }
-    if (joy.getRawButton(CM.intakePos) && !intakeUp){
-      intakeL.set(Value.kReverse);
-      intakeR.set(Value.kReverse);
+    if (joy.getRawButton(CM.intakePos) && !intakeUp && !intakeButton){
+      intake.set(0);
       intakeButton = true;
+      intakeUp = true;
     }
     if (intakeButton && !joy.getRawButton(CM.intakePos)) {
-      intakeUp = false;
       intakeButton = false;
-    }*/
+    }
+    if (intakeUp) {
+      intake.set(intakeSPD * joy.getRawAxis(CM.intakeSpin));
+    }
+    ////////////////////////////////////////////////
+
+
     if (joy.getRawButton(6))
       paddle.set(Value.kReverse);
     else
