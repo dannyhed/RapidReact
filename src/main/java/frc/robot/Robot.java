@@ -50,9 +50,9 @@ public class Robot extends TimedRobot {
   //private final DoubleSolenoid intakeL = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeLup, RM.intakeLdown);
   //private final DoubleSolenoid intakeR = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeRup, RM.intakeRdown);
 
-  private final float SPD = 1f;
+  private final float SPD = 0.5f;
   private final float sideSPD = 0.5f;
-  private final float shootSPD = 0.6f;
+  private final float shootSPD = 0.45f;
   private final float intakeSPD = 0.25f;
   private final float revSpeed = 0.6f;
 
