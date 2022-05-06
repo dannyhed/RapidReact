@@ -50,24 +50,32 @@ public class Robot extends TimedRobot {
   //private final DoubleSolenoid intakeL = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeLup, RM.intakeLdown);
   //private final DoubleSolenoid intakeR = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, RM.intakeRup, RM.intakeRdown);
 
-  private final float SPD = 0.6f;
-  private final float sideSPD = 1.2f;
+  private final float SPD = 0.5f;
+  private final float sideSPD = 1.3f;
   private final float shootSPD = 0.45f;
-  private final float intakeSPD = 0.15f;
-  private final float revSpeed = 0.6f;
+  private final float intakeSPD = 0.2f;
+  private final float intakeSPDb = 0.4f;
+  private final float intakeGentle = 2.0f;
+  private final float speedDist = 0.9f;
 
   //Autonomous timing
   private final float autoBack = 1.0f;
-  private final float autoFwd = 1.0f;
+  private final float autoJerk = 0.25f;
+  private final float jerkSPD = 0.8f;
+  private final float autoFwd = 1.5f;
   private final float autoRest = 0.25f;
   private final float autoRev = 1.0f;
-  private final float autoPaddle = 1.0f;
-  private final float autoSPD = 0.25f;
+  private final float autoPaddle = 0.5f;
+  private final float autoSPD = 0.4f;
+  private final float autoDelay = 5.0f;
 
   private boolean intakeUp = true;
   private boolean intakeButton = false;
 
+  
   private final Timer timer = new Timer();
+  private final Timer intakeTimer = new Timer();
+  private final Timer shootTimer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -90,63 +98,128 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    if (timer.get() < autoBack) {
+    if (timer.get() < autoDelay) {}
+    else if (timer.get() < autoDelay + autoRev) {
+      shooter.set(shootSPD);
+    }
+    else if (timer.get() < autoDelay + autoRev + autoPaddle) {
+      paddle.set(Value.kReverse);
+    }
+    else if (timer.get() < autoDelay + autoRev + autoPaddle + autoJerk) {
+      fr.set(ControlMode.PercentOutput, jerkSPD);
+      br.set(ControlMode.PercentOutput, jerkSPD);
+      fl.set(ControlMode.PercentOutput, -jerkSPD);
+      bl.set(ControlMode.PercentOutput, -jerkSPD);
+
+      shooter.set(0);
+      paddle.set(Value.kForward);
+    }
+    else if (timer.get() < autoDelay + autoRev + autoPaddle + autoJerk + autoBack) {
       fr.set(ControlMode.PercentOutput, autoSPD);
       br.set(ControlMode.PercentOutput, autoSPD);
       fl.set(ControlMode.PercentOutput, -autoSPD);
       bl.set(ControlMode.PercentOutput, -autoSPD);
-    } 
-    else if (timer.get() < (autoBack + autoRest)){
+
+    }
+    else {
       fr.set(ControlMode.PercentOutput, 0);
       br.set(ControlMode.PercentOutput, 0);
       fl.set(ControlMode.PercentOutput, 0);
       bl.set(ControlMode.PercentOutput, 0);
     }
-    else if (timer.get() < (autoBack + autoRest + autoFwd)){
+    /* 
+    if (timer.get() < autoDelay) {
+
+    }
+    else if (timer.get() < autoBack + autoDelay) {
+      fr.set(ControlMode.PercentOutput, autoSPD);
+      br.set(ControlMode.PercentOutput, autoSPD);
+      fl.set(ControlMode.PercentOutput, -autoSPD);
+      bl.set(ControlMode.PercentOutput, -autoSPD);
+    } 
+    else if (timer.get() < (autoBack + autoRest + autoDelay)){
+      fr.set(ControlMode.PercentOutput, 0);
+      br.set(ControlMode.PercentOutput, 0);
+      fl.set(ControlMode.PercentOutput, 0);
+      bl.set(ControlMode.PercentOutput, 0);
+    }
+    else if (timer.get() < (autoBack + autoRest + autoFwd + autoDelay)){
       fr.set(ControlMode.PercentOutput, -autoSPD);
       br.set(ControlMode.PercentOutput, -autoSPD);
       fl.set(ControlMode.PercentOutput, autoSPD);
       bl.set(ControlMode.PercentOutput, autoSPD);
     }
-    else if (timer.get() < (autoBack + autoRest + autoFwd + autoRev)) {
+    else if (timer.get() < (autoBack + autoRest + autoFwd + autoRev + autoDelay)) {
       fr.set(ControlMode.PercentOutput, 0);
       br.set(ControlMode.PercentOutput, 0);
       fl.set(ControlMode.PercentOutput, 0);
       bl.set(ControlMode.PercentOutput, 0);
       shooter.set(revSpeed);
     }
-    else if (timer.get() < (autoBack + autoRest + autoFwd + autoRev + autoPaddle)){
+    else if (timer.get() < (autoBack + autoRest + autoFwd + autoRev + autoPaddle + autoDelay)){
       paddle.set(Value.kReverse);
     }
     else {
       shooter.set(0);
       paddle.set(Value.kForward);
-    }
+    }*/
   }
 
   /** This function is called once each time the robot enters teleoperated mode. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    intakeTimer.reset();
+    intakeTimer.start();
+    shootTimer.reset();
+    shootTimer.start();
+  }
 
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
     fr.set(ControlMode.PercentOutput, SPD * (joy.getRawAxis(CM.forwardR) + sideSPD * joy.getRawAxis(CM.sidewaysR)));
-    br.set(ControlMode.PercentOutput, SPD * (joy.getRawAxis(CM.forwardR) - sideSPD * joy.getRawAxis(CM.sidewaysR)));
+    br.set(ControlMode.PercentOutput, speedDist * SPD * (joy.getRawAxis(CM.forwardR) - sideSPD * joy.getRawAxis(CM.sidewaysR)));
     fl.set(ControlMode.PercentOutput, SPD * (-joy.getRawAxis(CM.forwardL) + sideSPD * joy.getRawAxis(CM.sidewaysL)));
-    bl.set(ControlMode.PercentOutput, SPD * (-joy.getRawAxis(CM.forwardL) - sideSPD * joy.getRawAxis(CM.sidewaysL)));
+    bl.set(ControlMode.PercentOutput, speedDist * SPD * (-joy.getRawAxis(CM.forwardL) - sideSPD * joy.getRawAxis(CM.sidewaysL)));
 
-    shooter.set(shootSPD * joy.getRawAxis(CM.shootSpin));
+
+    if (joy.getRawAxis(CM.shootSpin) == 0) {
+      shootTimer.reset();
+      shootTimer.start();
+      if (joy.getRawButton(CM.shootPaddle)) {
+        paddle.set(Value.kReverse);
+      }
+      else
+        paddle.set(Value.kForward);
+    }
+    else if (shootTimer.get() < autoRev){    
+      shooter.set(shootSPD * joy.getRawAxis(CM.shootSpin));
+      /*if (joy.getRawButton(CM.shootPaddle)) {
+        paddle.set(Value.kReverse);
+      }
+      else
+        paddle.set(Value.kForward);*/
+    }
+    else {
+      if (!joy.getRawButton(CM.shootPaddle)) {
+        paddle.set(Value.kReverse);
+      }
+      else paddle.set(Value.kForward);
+      shooter.set(shootSPD * joy.getRawAxis(CM.shootSpin));
+    }
     
     //intake.set(intakeSPD * joy.getRawAxis(CM.intakeSpin));
 
     //////////////// TOGGLE INTAKE /////////////////
     if (joy.getRawButton(CM.intakePos) && intakeUp && !intakeButton) {
-      intake.set(intakeSPD);
+      intakeTimer.reset();
+      intakeTimer.start();
       intakeButton = true;
       intakeUp = false;
     }
     if (joy.getRawButton(CM.intakePos) && !intakeUp && !intakeButton){
+      intakeTimer.reset();
+      intakeTimer.start();
       intake.set(0);
       intakeButton = true;
       intakeUp = true;
@@ -154,16 +227,27 @@ public class Robot extends TimedRobot {
     if (intakeButton && !joy.getRawButton(CM.intakePos)) {
       intakeButton = false;
     }
-    if (intakeUp) {
-      intake.set(intakeSPD * joy.getRawAxis(CM.intakeSpin));
+    if (intakeTimer.get() < intakeGentle) {
+      if (intakeUp) {
+        intake.set(intakeSPDb * 1 / (intakeGentle / intakeTimer.get()) * joy.getRawAxis(CM.intakeSpin));
+      }
+      if (!intakeUp) {
+        intake.set(intakeSPD * 1 / (intakeGentle / intakeTimer.get()));
+      }
+    }
+    else {
+      if (intakeUp) {
+        intake.set(intakeSPDb * joy.getRawAxis(CM.intakeSpin));
+      }
+      if (!intakeUp) {
+        intake.set(intakeSPD);
+      }
+    }
+    if (joy.getRawAxis(CM.intakeSpin) == 0 && intakeUp) {
+      intakeTimer.reset();
+      intakeTimer.start();
     }
     ////////////////////////////////////////////////
-
-
-    if (joy.getRawButton(6))
-      paddle.set(Value.kReverse);
-    else
-      paddle.set(Value.kForward);
     
   }
 

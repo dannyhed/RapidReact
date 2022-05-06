@@ -35,8 +35,8 @@ public class CM {
         shootSpin = R_Trigger, 
         intakeSpin = L_Trigger, 
         intakePos = L_Bumper, 
-        shootPaddle = R_Bumper;
-
+        shootPaddle = R_Bumper,
+        highIntake = L_Trigger;
     //Assignments
     /*public CM() {
         if (DriveMode == Tank) {
